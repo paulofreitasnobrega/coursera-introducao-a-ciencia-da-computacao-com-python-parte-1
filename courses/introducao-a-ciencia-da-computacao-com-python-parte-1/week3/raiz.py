@@ -36,4 +36,4 @@ print(Bhaskara(entradas[0], entradas[1], entradas[2]))
 # Guia de Testes
 # [Delta < 0]: A=1, B=-4, C=5 - Sem Raiz Real
 # [Delta == 0]: A=4, B=-4, C=1 - Raiz Real: 0.5
-# [Delta == 0]: A=1, B=-5, C=6 - Raízes Reais: 3.0 e 2.0
+# [Delta > 0]: A=1, B=-5, C=6 - Raízes Reais: 3.0 e 2.0
