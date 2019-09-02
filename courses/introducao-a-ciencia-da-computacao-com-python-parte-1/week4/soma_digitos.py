@@ -1,12 +1,11 @@
-# Week 4 - Desafio
-# Exercício - Soma dos Dígitos
-# Sugerido pelo Prof. Fabio Kon em aula
+# Week 4 - Lista de Exercícios 3
+# Exercício 3
 
-# Faça um programa em Python que receba um número inteiro do usuário e após
-# some cada um dos dígitos deste mesmo número.
-# Ex: 1234 = 10. Onde (1 + 2 + 3 + 4)
+# Escreva um programa que receba um número inteiro na entrada, calcule e
+# imprima a soma dos dígitos deste número na saída
+# Exemplo: 123 = 6
 
-# Aluno: Paulo Freitas Nobrega
+#Aluno: Paulo Freitas Nobrega
 
 soma = 0
 
@@ -32,7 +31,7 @@ while sum(separacao):
     soma += separacao[1]
     separacao = SeperarNumeros(separacao[0])
 
-print("Soma Total: {}".format(soma))
+print(soma)
 
 # Uma alternativa com um código menor seria aceitar uma entrada em string
 # converte-la em list (Ex: list("1234") = ['1','2','3','4']) e passá-la para
