@@ -116,7 +116,25 @@ def partida():
 
 # Gerencia o fluxo do campeonato.
 def campeonato():
-    return 'resolve'
+    numeroDaRodada = 1
+    placarGeral = {}
+
+    # inicia as partidas
+    while numeroDaRodada < 4:
+        print("***** Rodada {} *****\n".format(rodada))
+
+        # inicia uma partida e recebe como resposta uma list com dados do vencedor
+        vencedor = partida()
+
+        # atualiza os valores do placar geral
+        if vencedor[1] in placarGeral:
+            placarGeral[vencedor[1]] += 1
+        else:
+            placarGeral[vencedor[1]] = 1
+
+        numeroDaRodada += 1
+
+    print("fim")
 
 # Função de entrada do programa.
 def main():
