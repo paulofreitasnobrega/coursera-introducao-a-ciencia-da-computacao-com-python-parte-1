@@ -5,8 +5,6 @@
 # deverá seguir a estratégia vencedora explicada com detalhes na resenha
 # do exercício.
 
-# Minhas Funções
-
 # Permite ao jogador denifir o modo de jogo.
 def ModoDeJogo():
     # define uma lista dos modos de jogo permitidos
@@ -27,114 +25,123 @@ def ModoDeJogo():
 
     return modoDeJogoSelecionado
 
-# Seleciona o próximo jogador
-def SelecionarProximoJogador(proximoJogador = 0):
-    # define uma lista contendo ID, Rótulo e método callback de cada jogador
-    competidores = [
-        [0, "Jogador", "usuario_escolhe_jogada"],
-        [1, "Comutador", "computador_escolhe_jogada"]
-    ]
-
-    # reseta o jogador se o número for maior que a quantidade de jogadores - 1
-    if proximoJogador > 1:
-        proximoJogador = 0;
-
-    return competidores[proximoJogador]
-
-# Funcões obrigatórias pelo sistema automático de correção
-
-# Define a estratégia de jogada do computador.
+# Define a jogada do computador.
 def computador_escolhe_jogada(n, m):
-    # inclui uma nomeclatura com melhor compreensão para os atributos obrigatórios
+    # nomeclatura com melhor compreensão para os atributos obrigatórios
     pecasRestantesNoJogo = n
     limitePecasRemovidas = m
+    escolhaDoComputador = 0
 
-    # define a estratégia do computador, entre remover todas as peças restantes,
-    # remover a quantidade máxima de peças permitidas ou remover uma quantidade
-    # estratégica de peças para garantir a vitória
+    # define a estratégia do computador: remover todas as peças restantes
+    # ou remover a quantidade máxima de pecas permitidas e multiplas de (m + 1)
     if pecasRestantesNoJogo <= limitePecasRemovidas:
-        return pecasRestantesNoJogo
-    elif (pecasRestantesNoJogo - limitePecasRemovidas) >= (limitePecasRemovidas + 1):
-        return limitePecasRemovidas
+        escolhaDoComputador = pecasRestantesNoJogo
     else:
-        for i in range(limitePecasRemovidas, 0, -1):
-            if (pecasRestantesNoJogo - i) >= (limitePecasRemovidas + 1):
-                return i
+        for i in range(1, (limitePecasRemovidas + 1)):
+            if (pecasRestantesNoJogo - i) % (limitePecasRemovidas + 1) == 0:
+                escolhaDoComputador = i
+
+    # quando não for possível a vitória do computador. Retornar o valor limite
+    # de peças a serem removidas por turno
+    if escolhaDoComputador == 0:
+        escolhaDoComputador = limitePecasRemovidas
+
+    return escolhaDoComputador
 
 # Permite ao Jogador fazer uma jogada.
 def usuario_escolhe_jogada(n, m):
-    # Eu não compreendi a obrigatoriedade do uso do parametro n.
+    # nomeclatura com melhor compreensão para os atributos obrigatórios
+    pecasRestantesNoJogo = n
     limitePecasRemovidas = m
     escolhaDoJogador = 0
 
+    # define o limite permitido na jogada
+    if pecasRestantesNoJogo >= limitePecasRemovidas:
+        limitePecasRemovidasNaJogada = limitePecasRemovidas
+    else:
+        limitePecasRemovidasNaJogada = pecasRestantesNoJogo
+
     # solicita ao usuário o número de peças a serem retiradas no turno
-    while escolhaDoJogador > limitePecasRemovidas or escolhaDoJogador < 1:
+    while escolhaDoJogador > limitePecasRemovidasNaJogada or escolhaDoJogador < 1:
         escolhaDoJogador = int(input("Quantas peças você vai tirar? "))
 
     return escolhaDoJogador
 
 # Gerencia o fluxo de cada partida.
 def partida():
-    jogadorAtual = []
-    ultimoJogador = []
+    computadorVenceu = True
+    turnoDoComputador = False
     limitePecasPorJogada = 0
 
     # solicita ao usuário o número total de peças no tabuleiro
     totalDePecas = int(input("Quantas peças? "))
 
     # solicita ao usuário o número de peças limites a serem retiradas por turno
-    while limitePecasPorJogada < 1 or limitePecasPorJogada > totalDePecas:
+    while limitePecasPorJogada < 1:
         limitePecasPorJogada = int(input("Limite de peças por jogada? "))
 
-    # determina o jogador responsável pelo primeiro turno da rodada
+    # determina o responsável pelo primeiro turno da rodada
     if totalDePecas % (limitePecasPorJogada + 1) == 0:
-        jogadorAtual = SelecionarProximoJogador()
+        print("Você começa!\n")
+        turnoDoComputador = False
     else:
-        jogadorAtual = SelecionarProximoJogador(1)
-
-    print("{} começa!\n".format(jogadorAtual[1]))
+        print("Computador começa!\n")
+        turnoDoComputador = True
 
     # inicia os turnos
     while totalDePecas > 0:
-        # invoca o metodo específico de cada jogador.
-        # armazenando sua jogada e calcula o valor total de peças restantes
-        pecasRetiradas = eval(jogadorAtual[2])(totalDePecas, limitePecasPorJogada)
+        # invoca a função específica de jogador/computador.
+        # recebe a quantidade de peças a serem retiradas do tabuleiro
+        # e exibe mensagem da quantidade de peças retiradas do tabuleiro
+        if turnoDoComputador:
+            pecasRetiradas = computador_escolhe_jogada(totalDePecas, limitePecasPorJogada)
+            print("O computador tirou {} peca(s).".format(pecasRetiradas))
+        else:
+            pecasRetiradas = usuario_escolhe_jogada(totalDePecas, limitePecasPorJogada)
+            print("Você tirou {} peca(s).".format(pecasRetiradas))
+
+        # calcula o valor de peças restantes
         totalDePecas = totalDePecas - pecasRetiradas
 
-        # exibe as mensagem do turno
-        print("O {} tirou {} peca(s)\n".format(jogadorAtual[1], pecasRetiradas))
-        print("Agora resta(m) {} peça(s) no tabuleiro\n".format(totalDePecas))
+        # exibe mensagem da quantidade de peças restantes no tabuleiro
+        if totalDePecas > 1:
+            print("Agora restam {} peças no tabuleiro.\n".format(totalDePecas))
+        elif totalDePecas == 1:
+            print("Agora resta apenas uma peça no tabuleiro.")
 
-        # atribui os jogadores dos turnos (anterior/proximo)
-        ultimoJogador = jogadorAtual
-        jogadorAtual = SelecionarProximoJogador(jogadorAtual[0] + 1)
+        # atribui o proximo a jogar
+        turnoDoComputador = not turnoDoComputador
 
-    # exibe a mensagem do vencedor e retorna uma lista contendo, ID, Rótulo
-    # e método callback
-    print("Fim do jogo! O {} ganhou!".format(ultimoJogador[1]))
-    return(ultimoJogador)
+    # exibe a mensagem do vencedor
+    if not turnoDoComputador:
+        print("O computador ganhou!")
+    else:
+        computadorVenceu = False
+        print("Você ganhou!")
+
+    return(computadorVenceu)
 
 # Gerencia o fluxo do campeonato.
 def campeonato():
     numeroDaRodada = 1
-    placarGeral = {}
+    pontosDoComputador = 0
+    pontosDoUsuario = 0
 
-    # inicia as partidas
+    # loop de rodadas
     while numeroDaRodada < 4:
-        print("***** Rodada {} *****\n".format(rodada))
+        print("**** Rodada {} ****\n".format(numeroDaRodada))
 
-        # inicia uma partida e recebe como resposta uma list com dados do vencedor
-        vencedor = partida()
-
-        # atualiza os valores do placar geral
-        if vencedor[1] in placarGeral:
-            placarGeral[vencedor[1]] += 1
+        # inicia a partida e atualiza os valores do placar geral
+        if partida():
+            pontosDoComputador += 1
         else:
-            placarGeral[vencedor[1]] = 1
+            pontosDoUsuario += 1
 
+        # incrementa o número da rodada
         numeroDaRodada += 1
 
-    print("fim")
+    # exibe o placa final
+    print("Placar: Você {} X {} Computador".format(pontosDoUsuario, pontosDoComputador))
 
 # Função de entrada do programa.
 def main():
