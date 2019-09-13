@@ -7,6 +7,14 @@
 
 #Aluno: Paulo Freitas Nobrega
 
+# Você consegue resolver essa questão utilizando sum(list). Para fim didático
+# e fixação vou utilizar estruturas de repetição e condicionais
+
 # Recebe um lista de números e retorna a soma destes
-def soma_elementos(lista):
-	return sum(lista)
+def soma_elementos(numeros):
+	soma = 0
+
+	for numeroCorrente in numeros:
+		soma += numeroCorrente
+
+	return soma
