@@ -2,14 +2,34 @@
 # Programa completo - Similaridades entre textos - Caso COH-PIAH
 
 # Seu programa deverá receber diversos textos e calcular os valores dos
-# diferentes traços linguísticos
+# diferentes traços linguísticos, afim de realizar uma comparação e verficar,
+# de acordo com a assinatura definida como padrão, qual texto esta "infectado"
+
+# Mais detalhes na resenha do exercício
 
 #Aluno: Paulo Freitas Nobrega
 
 import re
+import math
+
+# Retorna a quantidade de caracteres de um conjunto de palavras,
+# frases ou sentença
+def quantidadeTotalDeCaracteres(conjuntos):
+    quantidadeCaracteres = 0
+
+    for conjunto in conjuntos:
+        quantidadeCaracteres += len(conjunto)
+
+    return quantidadeCaracteres
+
+# Retorna o tamanho médio das palavras em uma lista de palavras
+def TamanhoMedioDasPalavras(palavras):
+
+    return (quantidadeTotalDeCaracteres(palavras) / len(palavras))
 
 # A funcao le os valores dos tracos linguisticos do modelo e devolve uma
 # assinatura a ser comparada com os textos fornecidos
+# padrão: [4.79, 0.72, 0.56, 80.5, 2.5, 31.6]
 def le_assinatura():
     print("Bem-vindo ao detector automático de COH-PIAH.")
 
@@ -81,13 +101,63 @@ def n_palavras_diferentes(lista_palavras):
 # IMPLEMENTAR. Essa funcao recebe duas assinaturas de texto e deve devolver o
 # grau de similaridade nas assinaturas.
 def compara_assinatura(as_a, as_b):
-    pass
+    somatorio = 0
+
+    for i in range(0, 6):
+        somatorio += math.fabs(as_a[i] - as_b[i])
+
+    somatorio = (somatorio / 6)
+    return round(somatorio, 2)
 
 # IMPLEMENTAR. Essa funcao recebe um texto e deve devolver a assinatura do texto.
 def calcula_assinatura(texto):
-    pass
+    frases = []
+    palavras = []
+
+    # separa as sentencas do texto
+    sentencas = separa_sentencas(texto)
+
+    # separa as frases do texto
+    for sentenca in sentencas:
+        frases += separa_frases(sentenca)
+
+    #separa as palavras do texto
+    for frase in frases:
+        palavras += separa_palavras(frase)
+
+    # define os traços linguisticos
+    wal = TamanhoMedioDasPalavras(palavras)
+    ttr = (n_palavras_diferentes(palavras) / len(palavras))
+    hlr = (n_palavras_unicas(palavras) / len(palavras))
+    sal = (quantidadeTotalDeCaracteres(sentencas) / len(sentencas))
+    sac = (len(frases) / len(sentencas))
+    pal = (quantidadeTotalDeCaracteres(frases) / len(frases))
+
+    return [wal, ttr, hlr, sal, sac, pal]
 
 # IMPLEMENTAR. Essa funcao recebe uma lista de textos e deve devolver o numero
 # (1 a n) do texto com maior probabilidade de ter sido infectado por COH-PIAH.
 def avalia_textos(textos, ass_cp):
-    pass
+    comparacoes = []
+
+    for texto in textos:
+        assinatura = calcula_assinatura(texto)
+        comparacao = compara_assinatura(assinatura, ass_cp)
+        comparacoes.append(comparacao)
+
+    menorComparacao = min(comparacoes)
+    indiceMenorComparacao = (comparacoes.index(menorComparacao) + 1)
+    print("O autor do texto {} está infectado com COH-PIAH".format(indiceMenorComparacao))
+
+    return indiceMenorComparacao
+
+# Função de entrada do programa
+def main():
+    # solicita ao usuário a assinatura padrao
+    ass_cp = le_assinatura()
+    # solicita ao usuário os textos a serem comparados
+    textos = le_textos()
+    # realiza a avaliação
+    avalia_textos(textos, le_assinatura())
+
+main()
